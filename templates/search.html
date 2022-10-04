@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+   <link href="{{ url_for('static', filename='assets/css/shCoreDefault.min.css') }}" rel="stylesheet" >
+{% endblock %}
+{% block title %}
+Search
+{% endblock %}
+{% block content %}
+<div class="content">
+<div class="row">
+        <div class="col-md-12">
+          <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-search"></i> You 've searched for: <strong>{{ term }}</strong>. Found in {{ matches | length }} files.</h3>
+          </div>
+          <form class="navbar-form navbar-right" action="/search" method="POST">
+          <input type="text" name="q" class="form-control" placeholder="Search in files">
+          <input type="hidden" name="scan_hash" value="{{scan_hash}}">
+          </form>
+          </br>
+          <table class="table table-bordered table-hover table-striped">
+              {% for path in matches %}
+                <tr><td> <a href="javascript:view('{{ path | js_escape }}','0','{{ path| relative | js_escape }}','{{scan_hash}}');">{{ path | relative }}</a> </td></tr>
+              {% endfor %}  
+          </table>
+        </div>
+
+</div>
+</div>
+
+<!--Modal-->
+<div id="myModal" class="modal" role="dialog" style="position: fixed;" tabindex="-1">
+  <div class="modal-admin">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="cls" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 id="fname" class="modal-title"></h4>
+        <h6 id="pth"></h6>
+      </div>
+      <div id="bdy" class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal End-->
+{% endblock %}
+{% block footer %}
+   {{ super() }}
+  {% endblock %}
+
+  {% block js %}
+   {{ super() }}
+   <script src="{{ url_for('static', filename='assets/js/plugins/shCore.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/plugins/shBrushJScript.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,104 @@
+<!--
+=========================================================
+* * Black Dashboard - v1.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/black-dashboard
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% block head %}
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='assets/img/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.ico') }}">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="SecLyzer is a vulnerabilities scanner. ">
+
+  <title>
+    SecLyzer - {% block title %}{% endblock %}
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <!-- Nucleo Icons -->
+  <link href="{{ url_for('static', filename='assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link href="{{ url_for('static', filename='assets/css/black-dashboard.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='assets/css/seclyzer.css') }}" rel="stylesheet" >
+  {% endblock %}
+</head>
+
+<body class="">
+<div class="wrapper">
+    <div class="main-panel" data="green">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-absolute ">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item" style="font-size: 1.5rem;">
+                <a href="/" class="nav-link">
+                  <strong>SecLyzer </strong>
+                </a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a href="/" class="nav-link">
+                <strong>Upload </strong>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a href="/scans/" class="nav-link">
+                <strong> Scans  </strong>
+                </a>
+              </li>
+               
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- End Navbar -->
+{% block content %}{% endblock %}
+  </div>
+</div>
+  {% block footer %}
+      <footer class="footer">
+        <div class="container-fluid">
+          <div class="copyright">
+             <img src ="{{ url_for('static', filename='assets/img/seclyzer.png') }}" width="48" height="48">
+             &copy; SecLyzer
+          </div>
+        </div>
+      </footer>
+  {% endblock %}
+
+
+ {% block js %}
+  <!--   Core JS Files   -->
+  <script src="{{ url_for('static', filename='assets/js/core/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/seclyzer.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/core/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/plugins/jquery.bootstrap-growl.min.js') }}"></script>    
+ {% endblock %}
+
+</body>
+</html>

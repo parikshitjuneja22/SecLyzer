@@ -1,0 +1,1038 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='assets/css/monokai-sublime.css') }}" rel="stylesheet" >
+  <link href="{{ url_for('static', filename='assets/css/shCoreDefault.min.css') }}" rel="stylesheet" >
+{% endblock %}
+{% block title %}
+Scan Results
+{% endblock %}
+{% block content %}
+      <div class="content">
+        <div class="container">
+
+           <div class="row">
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">SEVERITY</h5>
+    <h6 class="card-subtitle mb-2  text-danger" style="font-size: 1.15rem;">High</h6>
+    <p class="card-text" style="font-size: 4rem;">{{severity.error}}</p>
+    
+  </div>
+</div>
+</div>
+
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">SEVERITY</h5>
+    <h6 class="card-subtitle mb-2  text-warning" style="font-size: 1.15rem;">Medium</h6>
+    <p class="card-text" style="font-size: 4rem;">{{severity.warning}}</p>
+    
+  </div>
+</div>
+</div>
+
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">SEVERITY</h5>
+    <h6 class="card-subtitle mb-2 text-info" style="font-size: 1.15rem;">Low</h6>
+    <p class="card-text" style="font-size: 4rem;">{{severity.info}}</p>
+    
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">VULNERABILITY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">Score</h6>
+    <p class="card-text" style="font-size: 4rem;">{{severity.error*10 + severity.warning*5 + severity.info*2}}</p>
+    
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">VULNERABILITY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">Status</h6>
+      {% if severity.error*10 + severity.warning*5 + severity.info*2 > 10 %} 
+          {% if severity.error>=1 or severity.warning>=6 or severity.info>=20 %}
+          <p class="card-text text-danger" style="font-size: 4rem;">
+            HIGH
+          </p>
+          {% elif severity.error==0 and severity.warning<=5 and severity.warning>=1 and severity.info<=19 and severity.info>=10 %}
+          <p class="card-text text-info" style="font-size: 4rem;">
+            Medium
+          </p>
+          {% else %}
+          <p class="card-text text-muted" style="font-size: 4rem;">
+            Low
+          </p>
+          {% endif %}
+      {% else %}
+          <p class="card-text text-info" style="font-size: 4rem;">
+      Medium
+          </p>
+      {% endif %}
+    
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1rem;">RECOMMENDATION BASED ON CODE VULNERABILITIES</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1rem;">Is repository safe?</h6>
+{% if severity.error*10 + severity.warning*5 + severity.info*2 > 10 %}
+{% if severity.error>=1 or severity.warning>=6 or severity.info>=20 %}
+<p class="card-text text-danger" style="font-size: 3.5rem;">
+  NO
+</p>
+{% else %}
+<p class="card-text text-info" style="font-size: 3.5rem;">
+  YES
+</p>
+{% endif %}
+{% else %}
+<p class="card-text text-info" style="font-size: 3.5rem;">
+  YES
+</p>
+{% endif %}
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">REPOSITORY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">FORKS</h6>
+    <p class="card-text" style="font-size: 4rem;">{{forks}}</p>
+
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">REPOSITORY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">STARS</h6>
+    <p class="card-text" style="font-size: 4rem;">{{watchers}}</p>
+
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">REPOSITORY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">Open Issues</h6>
+    <p class="card-text" style="font-size: 4rem;">{{open_issues}}</p>
+
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">ALL REPOSITORY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">forks</h6>
+    <!-- {% for meta in json_name.keys() %}
+    <p class="card-text" style="font-size: 4rem;">{{meta}}</p>
+    {% endfor %} -->
+    {% set total = [0] -%}
+    {% for meta in json_name.values() %}
+    {% set _ = total.append(total.pop() + meta.get("forks", "0")) -%}
+    
+    {% endfor %}
+    <p class="card-text" style="font-size: 4rem;">{{total[0]}}</p>
+
+    <!-- <p class="card-text" style="font-size: 4rem;">{{open_issues}}</p> -->
+
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">ALL REPOSITORY</h5>
+    <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.15rem;">STARS</h6>
+    {% set total2 = [0] -%}
+    {% for meta in json_name.values() %}
+    {% set _ = total2.append(total2.pop() + meta.get("watchers", "0")) -%}
+    
+    {% endfor %}
+    <p class="card-text" style="font-size: 4rem;">{{total2[0]}}</p>
+
+  </div>
+</div>
+</div>
+<div class="col">
+
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1rem;">RECOMMENDATION BASED ON USER AND REPO PROFILE ANALYSIS</h5>
+
+    {% if ((forks>10 or watchers>20) and (total[0]>25 or total2[0]>50))%}
+    <p class="card-text text-info" style="font-size: 4rem;">
+      YES  
+    </p>
+    <span class="card-text">score: {{score.rank_git}}</span>
+    {% else %}
+    <p class="card-text text-danger" style="font-size: 3.5rem;">
+      NO
+    </p>
+    <span class="card-text">score: {{score.rank_git}}</span>
+    {% endif %}
+
+  </div>
+</div>
+</div>
+         
+        </div>
+                </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card" style="">
+  <div class="card-body">
+    <h5 class="card-title"  style="font-size: 1.25rem;">SCAN INFORMATION</h5>
+    <div class="ml-1 d-flex">
+      <div class="col-6">
+        <p><span class="card-subtitle " style="text-decoration:underline; font-size: 1rem;">File</span>  <h6 style="font-size: 1rem;">{{ scan_file }}</h6> </p>
+                <p><span class="card-subtitle " style="text-decoration:underline; font-size: 1rem;">SHA256 Hash</span>  <h6 style="font-size: 1rem;">{{scan_hash}} </h6>  </p>
+                <p><span class="card-subtitle " style="text-decoration:underline; font-size: 1rem;">Total Files Scanned</span>  <h6 style="font-size: 1rem;">{{files | length}} </h6> </p>
+        </div>
+        <div class="col-6 d-flex justify-content-around">
+          <div class="col-3">
+
+            <p><span class="badge badge-danger">Types of Issues</span>  <h2 class="" style="font-size: 6rem;">{{nodejs | length +  templates | length}}  </h2></p>
+          </div>
+          <div class="col-3">
+
+            <p><span class="badge badge-danger">Total No of Issues</span> <h2 style="font-size: 6rem;"> {{ security_issues}}  </h2></p>
+          </div>
+        </div>
+                
+                  
+                </div>
+ 
+  </div>
+</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="card" style="">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">DISTRIBUTION OF SEVERITY BY ISSUE TYPES</h5>
+    <div class="container">
+                    <canvas id="Severity"></canvas>
+                </div>
+   
+  </div>
+</div>
+          </div>
+        
+          <div class="col-6">
+            <div class="card" style="">
+  <div class="card-body">
+    <h5 class="card-title" style="font-size: 1.25rem;">NO OF FILES SCANNED VS ISSUES IDENTIFIED</h5>
+    <div class="container">
+                  <canvas id="Nos"></canvas>
+                </div>
+    
+  </div>
+</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-chart">
+              <div class="card-header ">
+                <div class="row">
+                  <div class="col-sm-6 text-left">
+                    <h5 class="card-category">OVERVIEW OF VULNERABILITIES DETECTED</h5>
+                    <h2 class="card-title">vulnerabilities</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+               <canvas id="Findings"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+           
+
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h2 class="card-title"> vulnerabilities Summary</h2>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped table-dark" id="">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>
+                          Vulnerability
+                        </th>
+                        <th>
+                          Vulnerability Description
+                        </th>
+                        <th>
+                          Severity Level
+                        </th>
+                        <th class="text-center">
+                          Standards
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for key, meta in nodejs.items() %}
+                     <tr>
+                        <td>
+                         {{ key | deslugify | upper}}
+                        </td>
+                        <td>
+                         {{ meta.metadata.description}}
+                        </td>
+                        <td>
+                        {% if meta.metadata.severity == 'ERROR' %}
+                            <span class="badge badge-danger">High</span>
+                        {% elif meta.metadata.severity == 'WARNING' %}
+                             <span class="badge badge-warning">Medium</span>
+                        {% elif meta.metadata.severity == 'INFO' %}
+                             <span class="badge badge-info">Low</span>
+                        {% endif %}
+                         
+                         
+                        </td>
+                        <td class="text-center">
+                         {{ meta.metadata.owaspweb}} </br>
+                         {{ meta.metadata.cwe}}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    {% for key, meta in templates.items() %}
+                     <tr>
+                        <td>
+                         {{ key | deslugify | upper}}
+                        </td>
+                        <td>
+                         {{ meta.metadata.description}}
+                        </td>
+                        <td>
+                        {% if meta.metadata.severity == 'ERROR' %}
+                            <div class="badge badge-danger">High</div>
+                        {% elif meta.metadata.severity == 'WARNING' %}
+                             <div class="badge badge-warning">Medium</div>
+                        {% elif meta.metadata.severity == 'INFO' %}
+                             <div class="badge badge-info">Low</div>
+                        {% endif %}
+                         
+                         
+                        </td>
+                        <td class="text-center">
+                         {{ meta.metadata.owaspweb}} </br>
+                         {{ meta.metadata.cwe}}
+                        </td>
+                         <td class="text-center">
+                         
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+       
+
+
+
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category">ALL IDENTIFIED VULNERABILITIES</h5>
+                <h2 class="card-title">Details of vulnerabilities Detected</h2>
+              </div>
+              <div class="card-body">
+              
+            <div id="scn" class="panel-body">
+            {% for tag, findings in nodejs.items() %}
+              <div class="panel-group id-{{findings.id}}">
+                <div class="panel panel-danger">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" data-toggle="collapse" href="#sec{{ tag|slugify }}cp">
+                    <div class="excp alert alert-info">
+                       <i class="tim-icons icon-minimal-right"></i> <span id="sec{{ tag|slugify }}" data-toggle="collapse">{{tag | deslugify | upper}} - {% if findings.files %}  <strong>{{findings.files|length}} </strong> {% else %} <strong>1 </strong>{% endif %}</span>
+                    </div>
+                    </h4>
+                  </div>
+                  <div id="sec{{ tag|slugify }}cp" class="panel-collapse collapse">
+                    <div class="panel-body">
+                  
+                        <div class="well well-sm">
+                            <p><strong>Description: </strong>{{ findings.metadata.description}}</p>
+                            <p><strong>Severity: </strong>
+                               {% if findings.metadata.severity == 'ERROR' %}
+                                    <span class="badge badge-danger">HIGH</span>
+
+                                {% elif findings.metadata.severity == 'WARNING' %}
+                                    <span class="badge badge-warning">MEDIUM</span>
+
+                                {% elif findings.metadata.severity == 'INFO' %}
+                                    <span class="badge badge-info">LOW</span>
+
+                                {% endif %}
+                            </p>
+                            <p><strong>OWASP:  </strong>{{ findings.metadata.owaspweb}}</p>
+                            <p><strong>CWE:  </strong>{{ findings.metadata.cwe}}</p>
+                            {% if findings.id %}
+                                <button class='btn btn-success' type="button" onclick="$('#fsha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#na_modal').modal('show');">
+                                Not Applicable
+                                </button>
+                                
+                                <button class='btn btn-warning' type="button" onclick="$('#isha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#fp_modal').modal('show');">
+                                False Positive
+                                </button>
+                             {% endif %}
+                             {% for file in findings.files %}
+                             <hr>
+                             <div class="id-{{file.id}}">
+                                <p><strong>File: </strong>{{  file.file_path |  relative}}</p>
+                                <p><strong>Lines: </strong>{{  file.match_lines }}</p>
+                                <button class="btn btn-info showhide" type="button" data-toggle="collapse" data-target="#collapse-sec{{ tag|slugify }}{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                    Show Code
+                                    </button>
+
+                                    <button class="btn btn-primary" type="button" 
+                                    onclick="view('{{ file.file_path | js_escape}}','{{ file.match_lines }}','{{ file.file_path | relative | js_escape }}','{{scan_hash}}');">
+                                    View File
+                                    </button>
+
+                                    <button class='btn btn-success' type="button" onclick="$('#fsha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#na_modal').modal('show');">
+                                    Not Applicable
+                                    </button>
+
+                                    <button class='btn btn-warning' type="button" onclick="$('#isha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#fp_modal').modal('show');">
+                                    False Positive
+                                    </button>
+
+                                <div class="collapse" id="collapse-sec{{ tag|slugify }}{{ loop.index }}">
+                                <div class="card card-block">
+                                <pre><code>{{ file.match_string }}</code></pre>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+    
+    <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category">ALL IDENTIFIED TEMPLATE ISSUES</h5>
+                <!-- <h2 class="card-title"> Template Issues</h2> -->
+              </div>
+              <div class="card-body">
+              
+            <div id="scn" class="panel-body">
+            {% for tag, findings in templates.items() %}
+              <div class="panel-group id-{{findings.id}}">
+                <div class="panel panel-danger">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" data-toggle="collapse" href="#tmpl{{ tag|slugify }}cp">
+                    <div class="excp alert alert-info">
+                     <i class="tim-icons icon-minimal-right"></i> <span id="tmpl{{ tag|slugify }}" data-toggle="collapse">{{tag | deslugify | upper}} - {% if findings.files %} <strong> {{findings.files|length}} </strong> {% else %} <strong>1 </strong>{% endif %}</span>
+                    </div>
+                    </h4>
+                  </div>
+                  <div id="tmpl{{ tag|slugify }}cp" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="well well-sm">
+                            <p><strong>Description: </strong>{{ findings.metadata.description}}</p>
+                            <p><strong>Severity: </strong>
+                               {% if findings.metadata.severity == 'ERROR' %}
+                                    <span class="badge badge-danger">
+                                {% elif findings.metadata.severity == 'WARNING' %}
+                                    <span class="badge badge-warning">
+                                {% elif findings.metadata.severity == 'INFO' %}
+                                    <span class="badge badge-info">
+                                {% endif %}
+                                {{ findings.metadata.severity}}
+                                </span>
+                            </p>
+                            <p><strong>OWASP: </strong>{{ findings.metadata.owaspweb}}</p>
+                            <p><strong>CWE: </strong>{{ findings.metadata.cwe}}</p>
+                            {% if findings.id %}
+                                <button class='btn btn-success' type="button" onclick="$('#fsha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#na_modal').modal('show');">
+                                Not Applicable
+                                </button>
+                                
+                                <button class='btn btn-warning' type="button" onclick="$('#isha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#fp_modal').modal('show');">
+                                False Positive
+                                </button>
+                            {% endif %}
+                             {% for file in findings.files %}
+                             <hr>
+                             <div class="id-{{file.id}}">
+                             <p><strong>File: </strong>{{  file.file_path | relative}}</p>
+                             {% if file.match_lines %}
+                               <p><strong>Lines: </strong>{{  file.match_lines }}</p>
+                             {% endif %}
+                          
+                               <button class="btn btn-info showhide" type="button" data-toggle="collapse" data-target="#collapse-tmpl{{ tag|slugify }}{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                Show Code
+                                </button>
+
+                                <button class="btn btn-primary" type="button" 
+                                onclick="view('{{ file.file_path | js_escape}}','{{ file.match_lines }}','{{ file.file_path | relative | js_escape}}','{{scan_hash}}');">
+                                View File
+                                </button>
+
+                                <button class='btn btn-success' type="button" onclick="$('#fsha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#na_modal').modal('show');">
+                                Not Applicable
+                                </button>
+
+                                <button class='btn btn-warning' type="button" onclick="$('#isha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#fp_modal').modal('show');">
+                                False Positive
+                                </button>
+
+                                <div class="collapse" id="collapse-tmpl{{ tag|slugify }}{{ loop.index }}">
+                                <div class="card card-block">
+                                <pre><code>{{ file.match_string }}</code></pre>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+ <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category">ISSUES MARKED AS NOT APPLICABLE</h5>
+                <!-- <h2 class="card-title">ISSUES MARKED AS NOT APPLICABLE</h2> -->
+              </div>
+              <div class="card-body">
+              
+            <div id="scn" class="panel-body">
+            {% for tag, findings in triaged.na.items() %}
+              <div class="panel-group rid-{{findings.id}}">
+                <div class="panel panel-danger">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" data-toggle="collapse" href="#na{{ tag|slugify }}cp">
+                    <div class="excp alert alert-info">
+                     <i class="tim-icons icon-minimal-right"></i> <span id="na{{ tag|slugify }}" data-toggle="collapse">{{tag | deslugify | upper}} - {% if findings.files %} <strong> {{findings.files|length}} </strong> {% else %} <strong>1 </strong>{% endif %}</span>
+                    </div>
+                    </h4>
+                  </div>
+                  <div id="na{{ tag|slugify }}cp" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="well well-sm">
+                            <p><strong>Description: </strong>{{ findings.metadata.description}}</p>
+                            <p><strong>Severity: </strong>
+                               {% if findings.metadata.severity == 'ERROR' %}
+                                    <span class="badge badge-danger">
+                                {% elif findings.metadata.severity == 'WARNING' %}
+                                    <span class="badge badge-warning">
+                                {% elif findings.metadata.severity == 'INFO' %}
+                                    <span class="badge badge-info">
+                                {% endif %}
+                                {{ findings.metadata.severity}}
+                                </span>
+                            </p>
+                            <p><strong>OWASP: </strong>{{ findings.metadata.owaspweb}}</p>
+                            <p><strong>CWE: </strong>{{ findings.metadata.cwe}}</p>
+                            {% if findings.id %}
+                                <button class='btn btn-warning' type="button" onclick="$('#rsha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#revert_modal').modal('show');">
+                                Revert
+                                </button>
+                            {% endif %}
+                             {% for file in findings.files %}
+                             <hr>
+                             <div class="rid-{{file.id}}">
+                             <p><strong>File: </strong>{{  file.file_path | relative}}</p>
+                             {% if file.match_lines %}
+                               <p><strong>Lines: </strong>{{  file.match_lines }}</p>
+                             {% endif %}
+                               <button class="btn btn-info showhide" type="button" data-toggle="collapse" data-target="#collapse-tmpl{{ tag|slugify }}{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                Show Code
+                                </button>
+
+                                <button class="btn btn-primary" type="button" 
+                                onclick="view('{{ file.file_path | js_escape}}','{{ file.match_lines }}','{{ file.file_path | relative | js_escape}}','{{scan_hash}}');">
+                                View File
+                                </button>
+
+                                <button class='btn btn-warning' type="button" onclick="$('#rsha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#revert_modal').modal('show');">
+                                Revert
+                                </button>
+
+                                <div class="collapse" id="collapse-tmpl{{ tag|slugify }}{{ loop.index }}">
+                                <div class="card card-block">
+                                <pre><code>{{ file.match_string }}</code></pre>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+         <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category">ISSUES MARKED AS FALSE POSITIVE</h5>
+                <!-- <h2 class="card-title">FALSE POSITIVE</h2> -->
+              </div>
+              <div class="card-body">
+              
+            <div id="scn" class="panel-body">
+            {% for tag, findings in triaged.fp.items() %}
+              <div class="panel-group rid-{{findings.id}}">
+                <div class="panel panel-danger">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" data-toggle="collapse" href="#fp{{ tag|slugify }}cp">
+                    <div class="excp alert alert-info">
+                     <i class="tim-icons icon-minimal-right"></i> <span id="fp{{ tag|slugify }}" data-toggle="collapse">{{tag | deslugify | upper}} - {% if findings.files %} <strong> {{findings.files|length}} </strong> {% else %} <strong>1 </strong>{% endif %}</span>
+                    </div>
+                    </h4>
+                  </div>
+                  <div id="fp{{ tag|slugify }}cp" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="well well-sm">
+                            <p><strong>Description: </strong>{{ findings.metadata.description}}</p>
+                            <p><strong>Severity: </strong>
+                               {% if findings.metadata.severity == 'ERROR' %}
+                                    <span class="badge badge-danger">
+                                {% elif findings.metadata.severity == 'WARNING' %}
+                                    <span class="badge badge-warning">
+                                {% elif findings.metadata.severity == 'INFO' %}
+                                    <span class="badge badge-info">
+                                {% endif %}
+                                {{ findings.metadata.severity}}
+                                </span>
+                            </p>
+                            <p><strong>OWASP: </strong>{{ findings.metadata.owaspweb}}</p>
+                            <p><strong>CWE: </strong>{{ findings.metadata.cwe}}</p>
+                            {% if findings.id %}
+                                <button class='btn btn-warning' type="button" onclick="$('#rsha2').val('{{findings.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#revert_modal').modal('show');">
+                                Revert
+                                </button>
+                            {% endif %}
+                             {% for file in findings.files %}
+                             <hr>
+                             <div class="rid-{{file.id}}">
+                             <p><strong>File: </strong>{{  file.file_path | relative}}</p>
+                             {% if file.match_lines %}
+                               <p><strong>Lines: </strong>{{  file.match_lines }}</p>
+                             {% endif %}
+                               <button class="btn btn-info showhide" type="button" data-toggle="collapse" data-target="#collapse-tmpl{{ tag|slugify }}{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                Show Code
+                                </button>
+
+                                <button class="btn btn-primary" type="button" 
+                                onclick="view('{{ file.file_path | js_escape}}','{{ file.match_lines }}','{{ file.file_path | relative | js_escape}}','{{scan_hash}}');">
+                                View File
+                                </button>
+
+                                <button class='btn btn-warning' type="button" onclick="$('#rsha2').val('{{file.id |js_escape}}');$('#ssha2').val('{{scan_hash | js_escape}}');$('#revert_modal').modal('show');">
+                                Revert
+                                </button>
+
+                                <div class="collapse" id="collapse-tmpl{{ tag|slugify }}{{ loop.index }}">
+                                <div class="card card-block">
+                                <pre><code>{{ file.match_string }}</code></pre>
+                                </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+      <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category"> DUPLICATE REPOSITORIES</h5>
+                <h2 class="card-title" style="color: #00f2c3;"> Repositories</h2>
+                    <form class="navbar-form navbar-right" action="/search" method="POST">
+                    <font color="white">Search in repositories </font>
+                    </br></br>
+                    <input type="text" name="q" class="form-control" placeholder="Search in files">
+                    <input type="hidden" name="scan_hash" value="{{scan_hash}}">
+                    </form>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table tablesorter " id="">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>
+                          Repos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for i in duplication.values() %}
+                          
+                        <tr>
+                            <td><a href="{{i.get('html_url')}}">{{ i.get('full_name') }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category"> USER REPOSITORIES</h5>
+                <h2 class="card-title" style="color: #00f2c3;"> Repositories</h2>
+                    <form class="navbar-form navbar-right" action="/search" method="POST">
+                    <font color="white">Search in repositories </font>
+                    </br></br>
+                    <input type="text" name="q" class="form-control" placeholder="Search in files">
+                    <input type="hidden" name="scan_hash" value="{{scan_hash}}">
+                    </form>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table tablesorter " id="">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>
+                          Repos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for meta in json_name.keys() %}
+                          
+                        <tr>
+                            <td><a href="javascript:view('{{ itm | js_escape}}','0','{{ meta | relative | js_escape}}','{{scan_hash}}');">{{ meta }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h5 class="card-category">FILES IN THE ARCHIVE</h5>
+                <h2 class="card-title" style="color: #00f2c3;"> Files</h2>
+                    <form class="navbar-form navbar-right" action="/search" method="POST">
+                    <font color="white">Search in files </font>
+                    </br></br>
+                    <input type="text" name="q" class="form-control" placeholder="Search in files">
+                    <input type="hidden" name="scan_hash" value="{{scan_hash}}">
+                    </form>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table tablesorter " id="">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>
+                          File
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for itm in files %}
+                        <tr>
+                            <td><a href="javascript:view('{{ itm | js_escape}}','0','{{ itm | relative | js_escape}}','{{scan_hash}}');">{{ itm | relative }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!--File View Modal-->
+    <div id="myModal" class="modal" role="dialog" style="position: fixed;" tabindex="-1">
+    <div class="modal-admin">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button id="cls" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 id="fname" class="modal-title"></h4>
+            <h6 id="pth"></h6>
+        </div>
+        <div id="bdy" class="modal-body">
+        </div>
+        </div>
+    </div>
+    </div>
+    <!--Modal End-->
+
+<!--fasle positive modal-->
+<div id="fp_modal" class="modal"  tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to mark this issue as false positive?</p>
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" value="" id="isha2">
+        <input type="hidden" value="" id="ssha2">
+        <button id="inv" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onclick="move_issue($('#ssha2').val(), $('#isha2').val(), 'fp')">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--not applicable modal-->
+<div id="na_modal" class="modal"  tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to mark this issue as not applicable?</p>
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" value="" id="fsha2">
+        <input type="hidden" value="" id="ssha2">
+        <button id="isu" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onclick="move_issue($('#ssha2').val(), $('#fsha2').val(), 'na')">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--revert modal-->
+<div id="revert_modal" class="modal"  tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirm</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to move the finding back to issues?</p>
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" value="" id="rsha2">
+        <input type="hidden" value="" id="ssha2">
+        <button id="bck" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" onclick="revert($('#ssha2').val(), $('#rsha2').val())">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  {% endblock %}
+
+ {% block footer %}
+   {{ super() }}
+  {% endblock %}
+
+
+ 
+  {% block js %}
+   {{ super() }}
+     <script src="{{ url_for('static', filename='assets/js/plugins/chartjs.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/plugins/shCore.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/plugins/shBrushJScript.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/plugins/highlight.pack.js') }}"></script>
+     <script>
+    // Findings
+    var canvas = document.getElementById('Findings').getContext('2d');
+    var gradientStroke = canvas.createLinearGradient(0, 230, 0, 50);
+    gradientStroke.addColorStop(1, 'rgba(50,205,50,0.2)');
+    gradientStroke.addColorStop(0.4, 'rgba(50,205,50,0.0)');
+    gradientStroke.addColorStop(0, 'rgba(50,205,50,0)'); //blue colors
+
+    var data = {
+        labels: [
+        {% for key in nodejs.keys() %}
+         '{{key | deslugify | upper}}',
+        {% endfor %}
+        {% for key in templates.keys() %}
+         '{{key | deslugify | upper}}',
+        {% endfor %}
+        ],
+        datasets: [
+            {
+                label: "No of detections",
+                backgroundColor: gradientStroke,
+                borderColor: '#7FFF00',
+                borderWidth: 2,
+                borderDash: [],
+                borderDashOffset: 0.0,
+                hoverBackgroundColor: gradientStroke,
+                data: [
+                {% for val in nodejs.values() %}
+                    {% if val.files %}
+                        {{ val.files | length }},
+                    {% else %}
+                        1,
+                    {% endif %}
+                {% endfor %}
+                {% for val in templates.values() %}
+                    {% if val.files %}
+                        {{ val.files | length }},
+                    {% else %}
+                        1,
+                    {% endif %}
+                {% endfor %}
+                ],
+            }
+        ]
+    };
+    var option = {
+    animation: {
+      duration:5000
+    },
+    responsive: true,
+    legend: {
+    display: false
+    }
+    };
+
+    var myBarChart = Chart.Bar(canvas,{
+        data:data,
+        options:option
+    });
+
+
+    // Severity
+      var ctx = document.getElementById("Severity").getContext('2d');
+        var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['High ', 'Medium', 'Low'],
+            datasets: [{
+            backgroundColor: [
+                'rgb(247, 70, 74)',
+                "#ffe000e8",
+                "#1d8cf8",
+            ],
+            
+            data: [{{severity.error}}, {{severity.warning}}, {{severity.info}}]
+            }]
+        }
+        });
+   
+
+    // Issues  vs Files
+
+    var ctx2 = document.getElementById("Nos").getContext('2d');
+    var dodata = {
+    datasets: [{
+        data: [{{files | length }}, {{security_issues}}],
+        backgroundColor: [
+        'rgb(70, 191, 189)',
+        "#fd5d93",
+        ]
+    }],
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+        'No of Files Scanned',
+        'No of Issues Identified',
+    ]
+    };
+    var myChart = new Chart(ctx2, {
+    type: 'doughnut',
+    data: dodata,
+    });
+
+    hljs.initHighlightingOnLoad();
+</script>
+  {% endblock %}
